@@ -7,6 +7,80 @@
         static List<string> accountNumbers = new List<string>();
         static List<double> balances = new List<double>();
 
+      
+        static void Main(string[] args)
+        {
+            bool exitApp = false;
+
+            while (!exitApp)
+            {
+                Console.WriteLine("Welcome to Spark Bank ");
+                Console.WriteLine("1. Add New Account");
+                Console.WriteLine("2. Deposit Money");
+                Console.WriteLine("3. Withdraw Money");
+                Console.WriteLine("4. Show Balance");
+                Console.WriteLine("5. Transfer Amount");
+                Console.WriteLine("6. List All Accounts");
+                Console.WriteLine("7. Apply Interest");
+                Console.WriteLine("8. Exit");
+
+                Console.Write("Choose an option: ");
+
+                int choice;
+
+                try
+                {
+                    choice = int.Parse(Console.ReadLine());
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid input. Please enter a number from 1 to 8");
+                    continue;
+                }
+
+
+                switch (choice)
+                {
+                    case 1:
+                        AddAccount();
+                        break;
+
+                    case 2:
+                        DepositMoney();
+                        break;
+
+                    case 3:
+                        WithdrawMoney();
+                        break;
+
+                    case 4:
+                        ShowBalance();
+                        break;
+
+                    case 5:
+                        TransferAmount();
+                        break;
+
+                    case 6:
+                        ListAllAccounts();
+                        break;
+
+                    case 7:
+                        ApplyInterest();
+                        break;
+
+                    case 8:
+                        exitApp = true;
+                        Console.WriteLine("Thank you for using our banking services..");
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid option...");
+                        break;
+                }
+            }
+        }
+
         static void AddAccount()
         {
             Console.Write("Enter customer name: ");
@@ -170,7 +244,7 @@
             }
 
 
-            
+
             Console.WriteLine("Customer Name: " + customerNames[index]);
             Console.WriteLine("Account Number: " + accountNumbers[index]);
             Console.WriteLine("Balance: " + balances[index]);
@@ -286,80 +360,6 @@
                     balances[i]);
             }
         }
-        static void Main(string[] args)
-        {
-            bool exitApp = false;
 
-            while (!exitApp)
-            {
-                Console.WriteLine("Welcome to Spark Bank ");
-                Console.WriteLine("1. Add New Account");
-                Console.WriteLine("2. Deposit Money");
-                Console.WriteLine("3. Withdraw Money");
-                Console.WriteLine("4. Show Balance");
-                Console.WriteLine("5. Transfer Amount");
-                Console.WriteLine("6. List All Accounts");
-                Console.WriteLine("7. Apply Interest");
-                Console.WriteLine("8. Exit");
-
-                Console.Write("Choose an option: ");
-
-                int choice;
-
-                try
-                {
-                    choice = int.Parse(Console.ReadLine());
-                }
-                catch
-                {
-                    Console.WriteLine("Invalid input. Please enter a number from 1 to 8");
-                    continue;
-                }
-
-
-                switch (choice)
-                {
-                    case 1:
-                        AddAccount();
-                        break;
-
-                    case 2:
-                        DepositMoney();
-                        break;
-
-                    case 3:
-                        WithdrawMoney();
-                        break;
-
-                    case 4:
-                        ShowBalance();
-                        break;
-
-                    case 5:
-                        TransferAmount();
-                        break;
-
-                    case 6:
-                        ListAllAccounts();
-                        break;
-
-                    case 7:
-                        ApplyInterest();
-                        break;
-
-                    case 8:
-                        exitApp = true;
-                        Console.WriteLine("Thank you for using our banking services..");
-                        break;
-
-                    default:
-                        Console.WriteLine("Invalid option...");
-                        break;
-                }
-            }
-        }
-
-
-       
     }
 }
