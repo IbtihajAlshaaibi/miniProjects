@@ -17,9 +17,9 @@ namespace E_CommerceDatabase.Models
         // Foreign Key
         public int CategoryId { get; set; }
 
-        // Navigation Property
+        // Navigation 
         public Category Category { get; set; }
 
-        public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+        public List<OrderProduct> OrderProducts { get; set; } 
     }
 }

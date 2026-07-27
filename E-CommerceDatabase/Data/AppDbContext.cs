@@ -22,8 +22,17 @@ namespace E_CommerceDatabase.Data
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseSqlServer(
-            "Server=DESKTOP-1LVOOVK\\SQLEXPRESS;Database=CompanyProjectDB;Trusted_Connection=True;TrustServerCertificate=True;"
+            "Server=DESKTOP-1LVOOVK\\SQLEXPRESS;Database=ECommerceDB;Trusted_Connection=True;TrustServerCertificate=True;"
             );
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<OrderProduct>()
+                .HasKey(op => new { op.OrderId, op.ProductId });
+        }
+
+
+
     }
 }

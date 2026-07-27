@@ -16,7 +16,7 @@ namespace E_CommerceDatabase.Models
         // Navigation 
         public User User { get; set; }
 
-        public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+        public List<OrderProduct> OrderProducts { get; set; } 
 
         public Review Review { get; set; }
     }

@@ -11,6 +11,6 @@ namespace E_CommerceDatabase.Models
         public string CategoryName { get; set; }
 
         // Navigation 
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        public List<Product> Products { get; set; } 
     }
 }
