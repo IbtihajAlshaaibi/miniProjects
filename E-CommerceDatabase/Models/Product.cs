@@ -4,7 +4,22 @@ using System.Text;
 
 namespace E_CommerceDatabase.Models
 {
-    internal class Product
+    public class Product
     {
+        public int ProductId { get; set; }
+
+        public string ProductName { get; set; }
+
+        public decimal Price { get; set; }
+
+        public int Stock { get; set; }
+
+        // Foreign Key
+        public int CategoryId { get; set; }
+
+        // Navigation Property
+        public Category Category { get; set; }
+
+        public ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
     }
 }
