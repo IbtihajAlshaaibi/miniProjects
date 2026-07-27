@@ -5,6 +5,7 @@ namespace E_CommerceDatabase.Data
 {
     public class AppDbContext : DbContext
     {
+        // 1- register models:
         public DbSet<User> Users { get; set; }
 
         public DbSet<Category> Categories { get; set; }
@@ -16,5 +17,13 @@ namespace E_CommerceDatabase.Data
         public DbSet<OrderProduct> OrderProducts { get; set; }
 
         public DbSet<Review> Reviews { get; set; }
+
+        //2- connect to database
+        protected override void OnConfiguring(DbContextOptionsBuilder options)
+        {
+            options.UseSqlServer(
+            "Server=DESKTOP-1LVOOVK\\SQLEXPRESS;Database=CompanyProjectDB;Trusted_Connection=True;TrustServerCertificate=True;"
+            );
+        }
     }
 }
