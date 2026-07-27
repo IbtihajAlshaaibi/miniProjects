@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Solution Items/">
     <File Path="E-CommerceDatabase/database/ERD.jfif" />
+    <File Path="E-CommerceDatabase/database/MAPPING.jfif" />
   </Folder>
   <Project Path="E-CommerceDatabase/E-CommerceDatabase.csproj" Id="b3673998-9a9d-42a1-bc87-df627b70ef87" />
   <Project Path="miniProject_1/miniProject_1.csproj" />
