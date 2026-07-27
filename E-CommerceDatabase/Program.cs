@@ -1,4 +1,6 @@
 ﻿using E_CommerceDatabase.Data;
+using E_CommerceDatabase.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 namespace E_CommerceDatabase
@@ -70,48 +72,479 @@ namespace E_CommerceDatabase
         // AppDbContext() inside any of these functions.
         static void RegisterUser()
         {
-            // TODO: implement (see Part 3 requirements)
+            Console.Write("Enter name: ");
+            string name = Console.ReadLine();
+
+
+            Console.Write("Enter email: ");
+            string email = Console.ReadLine();
+
+
+            Console.Write("Enter password: ");
+            string password = Console.ReadLine();
+
+
+
+            User user = new User
+            {
+                Name = name,
+                Email = email,
+                Password = password
+            };
+
+
+            context.Users.Add(user);
+            context.SaveChanges();
+
+
+            Console.WriteLine("User registered successfully!");
         }
         static void Login()
         {
-            // TODO: implement - on success, set loggedInUserId = <found user's Id>
+            Console.Write("Email: ");
+            string email = Console.ReadLine();
+
+
+            Console.Write("Password: ");
+            string password = Console.ReadLine();
+
+
+
+            var user = context.Users
+                .FirstOrDefault(u =>
+                u.Email == email &&
+                u.Password == password);
+
+
+
+            if (user != null)
+            {
+                loggedInUserId = user.UserId;
+
+                Console.WriteLine("Login successful!");
+            }
+            else
+            {
+                Console.WriteLine("Wrong email or password");
+            }
         }
         static void AddCategory()
         {
-            // TODO: implement
+            Console.Write("Category name: ");
+            string name = Console.ReadLine();
+
+
+            
+
+
+
+            Category category = new Category
+            {
+                CategoryName = name,
+                
+            };
+
+
+            context.Categories.Add(category);
+
+            context.SaveChanges();
+
+
+            Console.WriteLine("Category added!");
         }
         static void AddProduct()
         {
-            // TODO: implement
+            Console.Write("Product name: ");
+            string name = Console.ReadLine();
+
+
+            Console.Write("Price: ");
+            decimal price = decimal.Parse(Console.ReadLine());
+
+
+            Console.Write("Stock: ");
+            int stock = int.Parse(Console.ReadLine());
+
+
+
+            var categories = context.Categories.ToList();
+
+
+            Console.WriteLine("\nCategories:");
+
+            foreach (var c in categories)
+            {
+                Console.WriteLine($"{c.CategoryId} - {c.CategoryName}");
+            }
+
+
+
+            Console.Write("Choose Category Id: ");
+
+            int categoryId = int.Parse(Console.ReadLine());
+
+
+
+            Product product = new Product
+            {
+                ProductName = name,
+                Price = price,
+                Stock = stock,
+                CategoryId = categoryId
+            };
+
+
+
+            context.Products.Add(product);
+
+            context.SaveChanges();
+
+
+            Console.WriteLine("Product added!");
         }
         static void ViewAllProducts()
         {
-            // TODO: implement
+            var products = context.Products
+               .Include(p => p.Category)
+               .ToList();
+
+
+            Console.WriteLine("\n===== Products =====");
+
+
+            foreach (var product in products)
+            {
+                Console.WriteLine(
+                    $"ID: {product.ProductId} | " +
+                    $"Name: {product.ProductName} | " +
+                    $"Price: {product.Price} | " +
+                    $"Category: {product.Category.CategoryName}"
+                );
+            }
         }
         static void PlaceOrder()
         {
-            // TODO: implement - check loggedInUserId != 0 first
+            // Login check
+            if (loggedInUserId == 0)
+            {
+                Console.WriteLine("Please login first!");
+                return;
+            }
+
+
+
+            Console.WriteLine("\nAvailable Products:");
+
+            var products = context.Products.ToList();
+
+
+            foreach (var product in products)
+            {
+                Console.WriteLine(
+                    $"{product.ProductId} - {product.ProductName} - {product.Price}"
+                );
+            }
+
+
+
+            Order order = new Order
+            {
+                UserId = loggedInUserId,
+                OrderDate = DateTime.Now
+            };
+
+
+
+            context.Orders.Add(order);
+
+            context.SaveChanges();
+
+
+
+            bool addingProducts = true;
+
+
+            while (addingProducts)
+            {
+                Console.Write("\nEnter Product Id: ");
+                int productId = int.Parse(Console.ReadLine());
+
+
+                Console.Write("Enter Quantity: ");
+                int quantity = int.Parse(Console.ReadLine());
+
+
+
+                OrderProduct orderProduct = new OrderProduct
+                {
+                    OrderId = order.OrderId,
+                    ProductId = productId,
+                    Quantity = quantity
+                };
+
+
+
+                context.OrderProducts.Add(orderProduct);
+
+
+
+                Console.Write("Add another product? (y/n): ");
+
+                string answer = Console.ReadLine();
+
+
+                if (answer.ToLower() != "y")
+                {
+                    addingProducts = false;
+                }
+            }
+
+
+
+            context.SaveChanges();
+
+
+            Console.WriteLine("Order placed successfully!");
         }
         static void ViewMyOrders()
         {
-            // TODO: implement - check loggedInUserId != 0 first
+            if (loggedInUserId == 0)
+            {
+                Console.WriteLine("Please login first!");
+                return;
+            }
+
+
+
+            var orders = context.Orders
+                .Where(o => o.UserId == loggedInUserId)
+                .ToList();
+
+
+
+            Console.WriteLine("\n===== My Orders =====");
+
+
+            foreach (var order in orders)
+            {
+                Console.WriteLine(
+                    $"Order ID: {order.OrderId} | Date: {order.OrderDate}"
+                );
+            }
         }
         static void ViewOrderDetails()
         {
-            // TODO: implement
+            Console.Write("Enter Order ID: ");
+
+            int orderId = int.Parse(Console.ReadLine());
+
+
+
+            var order = context.Orders
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Product)
+                .Include(o => o.Review)
+                .FirstOrDefault(o => o.OrderId == orderId);
+
+
+
+            if (order == null)
+            {
+                Console.WriteLine("Order not found");
+                return;
+            }
+
+
+
+            Console.WriteLine("\n===== Order Details =====");
+
+            double total = 0;
+
+
+
+            foreach (var item in order.OrderProducts)
+            {
+                decimal price = item.Product.Price * item.Quantity;
+
+                total += price;
+
+
+                Console.WriteLine(
+                    $"Product: {item.Product.ProductName} | " +
+                    $"Quantity: {item.Quantity} | " +
+                    $"Price: {price}"
+                );
+            }
+
+
+
+            Console.WriteLine($"Total: {total}");
+
+
+
+            if (order.Review != null)
+            {
+                Console.WriteLine("\nReview:");
+
+                Console.WriteLine(
+                    $"Rating: {order.Review.Rating}"
+                );
+
+                Console.WriteLine(
+                    $"Comment: {order.Review.Comment}"
+                );
+            }
+            else
+            {
+                Console.WriteLine("No review yet.");
+            }
         }
         static void AddReview()
         {
-            // TODO: implement - check loggedInUserId != 0 first
+            if (loggedInUserId == 0)
+            {
+                Console.WriteLine("Please login first!");
+                return;
+            }
+
+
+
+            Console.Write("Enter Order ID: ");
+
+            int orderId = int.Parse(Console.ReadLine());
+
+
+
+            var order = context.Orders
+                .Include(o => o.Review)
+                .FirstOrDefault(o =>
+                    o.OrderId == orderId &&
+                    o.UserId == loggedInUserId);
+
+
+
+            if (order == null)
+            {
+                Console.WriteLine(
+                    "Order not found or does not belong to you."
+                );
+
+                return;
+            }
+
+
+
+            // Check one-to-one constraint
+            if (order.Review != null)
+            {
+                Console.WriteLine(
+                    "This order already has a review."
+                );
+
+                return;
+            }
+
+
+
+            Console.Write("Rating (1-5): ");
+
+            int rating = int.Parse(Console.ReadLine());
+
+
+
+            Console.Write("Comment: ");
+
+            string comment = Console.ReadLine();
+
+
+
+            Review review = new Review
+            {
+                OrderId = orderId,
+                Rating = rating,
+                Comment = comment
+            };
+
+
+
+            context.Reviews.Add(review);
+
+            context.SaveChanges();
+
+
+
+            Console.WriteLine(
+                "Review added successfully!"
+            );
         }
         static void ViewReviewsForProduct()
 
         {
+            Console.Write("Enter Product ID: ");
+
+            int productId = int.Parse(Console.ReadLine());
+
+
+
+            var reviews = context.OrderProducts
+                .Where(op => op.ProductId == productId)
+                .Include(op => op.Order)
+                .ThenInclude(o => o.Review)
+                .ToList();
+
+
+
+            Console.WriteLine(
+                "\n===== Product Reviews ====="
+            );
+
+
+
+            bool found = false;
+
+
+
+            foreach (var item in reviews)
+            {
+                if (item.Order.Review != null)
+                {
+                    found = true;
+
+
+                    Console.WriteLine(
+                        $"Rating: {item.Order.Review.Rating}"
+                    );
+
+
+                    Console.WriteLine(
+                        $"Comment: {item.Order.Review.Comment}"
+                    );
+
+
+                    Console.WriteLine("------------------");
+                }
+            }
+
+
+
+            if (!found)
+            {
+                Console.WriteLine(
+                    "No reviews found for this product."
+                );
+            }
         }
-        // TODO: implement
+
+        
+        
         static void Logout()
         {
-            // TODO: implement - reset loggedInUserId back to 0
+            loggedInUserId = 0;
+
+
+            Console.WriteLine(
+                "Logged out successfully!"
+            );
         }
     }
 }
